@@ -359,3 +359,11 @@ h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-
 @media(max-width:480px){
   .field-row{grid-template-columns:1fr}
 }
+
+/* ===== Real product images ===== */
+.card__media img,.modal__media img,.citem__img img,.sum-item__img img,.cat__art img{
+  width:100%;height:100%;object-fit:cover;display:block}
+.card__media img{transition:transform .8s var(--ease)}
+.card:hover .card__media img{transform:scale(1.05)}
+.modal__media{display:flex}
+.modal__media img{min-height:420px}

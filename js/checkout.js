@@ -45,7 +45,7 @@
     box.innerHTML = cart.map(i=>{
       const p = byId(i.id);
       return `<div class="sum-item">
-        <div class="sum-item__img">${dressSVG({style:p.style, ...p.colors})}<span class="sum-item__q">${i.qty}</span></div>
+        <div class="sum-item__img">${productMedia(p)}<span class="sum-item__q">${i.qty}</span></div>
         <div class="sum-item__info"><p class="sum-item__name">${p.name}</p><p class="sum-item__meta">${catLabel(p.cat)} · ${i.size}</p></div>
         <div class="sum-item__price">${money(p.price*i.qty)}</div>
       </div>`;

@@ -38,7 +38,7 @@
       <article class="card" data-id="${p.id}">
         <div class="card__media" data-quick="${p.id}">
           ${p.badge?`<span class="card__badge">${p.badge}</span>`:""}
-          ${dressSVG({style:p.style, ...p.colors})}
+          ${productMedia(p)}
           <button class="card__quick" data-quick="${p.id}">Brzi pregled</button>
         </div>
         <div class="card__info">
@@ -85,7 +85,7 @@
     const p = byId(id); if(!p) return;
     modalSize = "M";
     $("#modalBox").innerHTML = `
-      <div class="modal__media">${dressSVG({style:p.style, ...p.colors})}</div>
+      <div class="modal__media">${productMedia(p)}</div>
       <div class="modal__info">
         <button class="icon-btn modal__close" id="modalClose" aria-label="Zatvori">✕</button>
         <p class="modal__cat">${catLabel(p.cat)}</p>
@@ -144,7 +144,7 @@
       body.innerHTML = cart.map(i=>{
         const p = byId(i.id);
         return `<div class="citem">
-          <div class="citem__img">${dressSVG({style:p.style, ...p.colors})}</div>
+          <div class="citem__img">${productMedia(p)}</div>
           <div>
             <p class="citem__name">${p.name}</p>
             <p class="citem__meta">${catLabel(p.cat)} · ${i.size}</p>

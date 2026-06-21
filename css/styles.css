@@ -365,5 +365,93 @@ h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-
   width:100%;height:100%;object-fit:cover;display:block}
 .card__media img{transition:transform .8s var(--ease)}
 .card:hover .card__media img{transform:scale(1.05)}
-.modal__media{display:flex}
 .modal__media img{min-height:420px}
+
+/* ===== Wishlist (header + cards) ===== */
+.wish-btn{position:relative}
+.wish-count{position:absolute;top:2px;right:2px;background:var(--gold);color:#fff;
+  font-size:.6rem;font-weight:600;min-width:17px;height:17px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;padding:0 4px}
+.wish-count.is-empty{display:none}
+.chip--wish{display:inline-flex;align-items:center;gap:4px}
+
+.card__badges{position:absolute;top:12px;left:12px;z-index:2;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.card__badges .card__badge{position:static;top:auto;left:auto}
+.card__badge--3d{background:var(--ink);letter-spacing:.1em}
+
+.card__wish{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;
+  background:rgba(251,248,242,.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--ink-soft);backdrop-filter:blur(4px);transition:.25s var(--ease);opacity:0;transform:scale(.85)}
+.card:hover .card__wish,.card__wish.is-on{opacity:1;transform:none}
+.card__wish svg{fill:none;stroke:currentColor;stroke-width:1.6}
+.card__wish:hover{color:#c0563f}
+.card__wish.is-on{color:#c0563f}
+.card__wish.is-on svg{fill:#c0563f;stroke:#c0563f}
+
+/* ===== Product viewer (photo / 360° / 3D) ===== */
+.modal__media{display:block}
+.viewer{display:flex;flex-direction:column;height:100%;background:var(--ivory)}
+.viewer__stage{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:var(--sand);
+  display:flex;align-items:center;justify-content:center;touch-action:pan-y}
+.viewer__stage svg{width:100%;height:100%}
+.viewer .viewer__img{width:100%;height:100%;min-height:0;object-fit:cover;
+  transition:transform .3s var(--ease);user-select:none;-webkit-user-drag:none}
+.viewer__stage.is-zoomable{cursor:zoom-in}
+.viewer__stage.is-zoom .viewer__img{transform:scale(2)}
+.viewer__stage--spin{cursor:ew-resize}
+.viewer__stage--spin .viewer__img{transition:none}
+.viewer__stage--3d{background:radial-gradient(circle at 50% 32%,#ffffff,var(--sand))}
+.viewer__stage--3d model-viewer{width:100%;height:100%;--poster-color:transparent;background:transparent}
+.viewer__hint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  background:rgba(28,24,18,.62);color:var(--ivory);font-size:.6rem;letter-spacing:.1em;
+  text-transform:uppercase;padding:5px 12px;border-radius:20px;pointer-events:none;white-space:nowrap}
+.viewer__loading{color:var(--ink-soft);font-size:.85rem;letter-spacing:.06em}
+.viewer__tabs{display:flex;gap:6px;padding:12px;justify-content:center;border-bottom:1px solid var(--line)}
+.vtab{font-family:'Jost',sans-serif;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:8px 16px;border:1px solid var(--line);background:none;color:var(--ink-soft);cursor:pointer;border-radius:30px;transition:.25s}
+.vtab:hover{border-color:var(--gold)}
+.vtab.is-active{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.viewer__thumbs{display:flex;gap:8px;padding:12px;overflow-x:auto}
+.vthumb{flex:0 0 auto;width:54px;height:68px;border-radius:6px;overflow:hidden;border:1px solid var(--line);
+  background:var(--sand);cursor:pointer;padding:0}
+.vthumb img{width:100%;height:100%;object-fit:cover}
+.vthumb.is-active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+
+/* ===== Modal info extras ===== */
+.modal__colorline{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink-soft);margin-bottom:1.2rem}
+.swatch{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:inline-block;flex:0 0 auto}
+.modal__sizehead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.sizeguide-link{background:none;border:none;color:var(--gold-deep);font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;text-decoration:underline;font-family:'Jost',sans-serif}
+.sizeguide-link:hover{color:var(--gold)}
+.modal__actions{display:flex;gap:10px;align-items:stretch;margin-bottom:1.4rem}
+.modal__actions .btn{flex:1}
+.modal__wish{border:1px solid var(--line);border-radius:4px;width:52px;color:var(--ink-soft);flex:0 0 auto}
+.modal__wish svg{fill:none;stroke:currentColor;stroke-width:1.6}
+.modal__wish:hover{border-color:#c0563f;color:#c0563f}
+.modal__wish.is-on{color:#c0563f;border-color:#c0563f}
+.modal__wish.is-on svg{fill:#c0563f;stroke:#c0563f}
+.details{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.details__row{display:grid;grid-template-columns:96px 1fr;gap:12px}
+.details__row span{color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;font-size:.64rem;padding-top:3px}
+.details__row p{color:var(--ink);font-size:.88rem}
+
+/* ===== Size guide modal ===== */
+.modal--size{z-index:120}
+.sizeguide{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:min(560px,92vw);max-height:90vh;overflow-y:auto;background:var(--ivory);
+  border-radius:var(--radius);box-shadow:var(--shadow);padding:38px 34px}
+.sizeguide__close{position:absolute;top:14px;right:14px}
+.sizeguide h3{font-size:2rem;margin:.2rem 0 .6rem}
+.sizeguide__lead{color:var(--ink-soft);font-size:.92rem;margin-bottom:1.4rem}
+.sizeguide__table{width:100%;border-collapse:collapse;margin-bottom:1.6rem;font-size:.9rem}
+.sizeguide__table th,.sizeguide__table td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--line)}
+.sizeguide__table th{font-family:'Jost',sans-serif;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.sizeguide__table td:first-child,.sizeguide__table th:first-child{text-align:left;font-weight:600}
+.sizeguide__how h4{font-size:1.2rem;margin-bottom:.6rem}
+.sizeguide__how p{font-size:.88rem;color:var(--ink-soft);margin-bottom:.4rem}
+.sizeguide__note{margin-top:1rem}
+.sizeguide__note a{color:var(--gold-deep);text-decoration:underline}
+
+@media(max-width:900px){ .modal__media{aspect-ratio:auto} }
+@media(max-width:760px){ .card__wish{opacity:1;transform:none} }

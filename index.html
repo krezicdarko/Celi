@@ -4,8 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CELI Official — Elegantne haljine | Mostar</title>
-  <meta name="description" content="CELI Official — butik elegantnih i svečanih haljina iz Mostara. Otkrijte novu kolekciju i naručite online." />
+  <meta name="description" content="CELI Official — butik elegantnih i svečanih haljina iz Mostara. Otkrijte novu kolekciju, isprobajte 3D pregled i naručite online." />
+  <meta name="theme-color" content="#1c1a17" />
+  <link rel="canonical" href="https://celi.ba/" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="CELI Official" />
+  <meta property="og:title" content="CELI Official — Elegantne haljine | Mostar" />
+  <meta property="og:description" content="Butik elegantnih i svečanih haljina iz Mostara. Nova kolekcija 2026 uz 3D pregled." />
+  <meta property="og:image" content="assets/products/p9.jpg" />
+  <meta property="og:locale" content="hr_HR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CELI Official — Elegantne haljine" />
+  <meta name="twitter:description" content="Butik elegantnih i svečanih haljina iz Mostara." />
+  <meta name="twitter:image" content="assets/products/p9.jpg" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Pinyon+Script&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -42,6 +57,10 @@
       <div class="header__actions">
         <button class="icon-btn" id="searchToggle" aria-label="Pretraga">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </button>
+        <button class="icon-btn wish-btn" id="wishToggle" aria-label="Lista želja">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20s-7-4.6-9.3-9.2C1.2 7.9 2.6 5 5.5 5c1.9 0 3.2 1.1 3.9 2.2L12 9l2.6-1.8C15.3 6.1 16.6 5 18.5 5c2.9 0 4.3 2.9 2.8 5.8C19 15.4 12 20 12 20z"/></svg>
+          <span class="wish-count" id="wishCount">0</span>
         </button>
         <button class="icon-btn cart-btn" id="cartToggle" aria-label="Košarica">
           <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
@@ -99,6 +118,7 @@
       <button class="chip" data-filter="koktel">Koktel</button>
       <button class="chip" data-filter="dnevne">Dnevne</button>
       <button class="chip" data-filter="maxi">Maxi</button>
+      <button class="chip chip--wish" data-filter="wishlist">♡ Favoriti</button>
     </div>
 
     <div class="grid" id="productGrid"><!-- products injected by JS --></div>
@@ -189,9 +209,39 @@
   </aside>
 
   <!-- Quick view modal -->
-  <div class="modal" id="modal" aria-hidden="true">
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Pregled haljine">
     <div class="modal__overlay" id="modalOverlay"></div>
     <div class="modal__box" id="modalBox"><!-- injected --></div>
+  </div>
+
+  <!-- Size guide modal -->
+  <div class="modal modal--size" id="sizeModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Vodič za veličine">
+    <div class="modal__overlay" id="sizeOverlay"></div>
+    <div class="sizeguide">
+      <button class="icon-btn sizeguide__close" id="sizeClose" aria-label="Zatvori">✕</button>
+      <p class="eyebrow">CELI</p>
+      <h3>Vodič za veličine</h3>
+      <p class="sizeguide__lead">Mjere u centimetrima. Ako ste između dvije veličine, kod pripijenih krojeva preporučujemo veći broj.</p>
+      <table class="sizeguide__table">
+        <thead>
+          <tr><th>Veličina</th><th>EU</th><th>Poprsje</th><th>Struk</th><th>Bokovi</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>XS</td><td>34</td><td>80–83</td><td>62–65</td><td>88–91</td></tr>
+          <tr><td>S</td><td>36</td><td>84–87</td><td>66–69</td><td>92–95</td></tr>
+          <tr><td>M</td><td>38</td><td>88–91</td><td>70–73</td><td>96–99</td></tr>
+          <tr><td>L</td><td>40</td><td>92–96</td><td>74–78</td><td>100–104</td></tr>
+          <tr><td>XL</td><td>42</td><td>97–101</td><td>79–83</td><td>105–109</td></tr>
+        </tbody>
+      </table>
+      <div class="sizeguide__how">
+        <h4>Kako izmjeriti</h4>
+        <p><strong>Poprsje:</strong> oko najistaknutijeg dijela grudi.</p>
+        <p><strong>Struk:</strong> oko najužeg dijela struka.</p>
+        <p><strong>Bokovi:</strong> oko najšireg dijela bokova.</p>
+        <p class="sizeguide__note">Trebate pomoć s odabirom? Pišite nam na <a href="https://wa.me/38763008800" target="_blank" rel="noopener">WhatsApp</a> — rado savjetujemo.</p>
+      </div>
+    </div>
   </div>
 
   <!-- Toast -->

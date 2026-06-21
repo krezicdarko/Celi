@@ -17,7 +17,18 @@
   let cart = load(STORE_KEY);
   let wish = load(WISH_KEY);
   let activeFilter = "all";
+  let activeColor = null;
+  let sortBy = "featured";
   let searchTerm = "";
+
+  /* ---------- small helpers ---------- */
+  function stars(r){
+    const full = Math.round(r||0);
+    return `<span class="stars" aria-label="Ocjena ${(r||0).toFixed(1)} od 5">${"★".repeat(full)}${"☆".repeat(5-full)}</span>`;
+  }
+  function firstAvailableSize(p){
+    return SIZES.find(s=>!p.stock || p.stock[s]>0) || "M";
+  }
 
   /* ---------- persistence ---------- */
   function load(key){ try{ return JSON.parse(localStorage.getItem(key)) || []; }catch{ return []; } }
@@ -47,21 +58,38 @@
       p.name.toLowerCase().includes(searchTerm) ||
       p.cat.toLowerCase().includes(searchTerm) ||
       (p.desc||"").toLowerCase().includes(searchTerm);
-    if(activeFilter==="wishlist") return isWished(p.id) && okSearch;
+    const okColor = !activeColor || (p.color && p.color.name===activeColor);
+    if(activeFilter==="wishlist") return isWished(p.id) && okSearch && okColor;
     const okCat = activeFilter==="all" || p.cat===activeFilter || (p.tags||[]).includes(activeFilter);
-    return okCat && okSearch;
+    return okCat && okSearch && okColor;
+  }
+
+  function sortList(list){
+    const a = [...list];
+    if(sortBy==="price-asc")  a.sort((x,y)=>x.price-y.price);
+    else if(sortBy==="price-desc") a.sort((x,y)=>y.price-x.price);
+    else if(sortBy==="rating") a.sort((x,y)=>(y.rating||0)-(x.rating||0));
+    else if(sortBy==="new")   a.sort((x,y)=>(y.badge==="Novo"?1:0)-(x.badge==="Novo"?1:0));
+    return a;
   }
 
   function badges(p){
     const b = [];
     if(p.badge) b.push(`<span class="card__badge">${p.badge}</span>`);
+    if(p.oldPrice) b.push(`<span class="card__badge card__badge--sale">Akcija</span>`);
     if(p.model) b.push(`<span class="card__badge card__badge--3d">3D · AR</span>`);
+    else if(p.spin) b.push(`<span class="card__badge card__badge--3d">360°</span>`);
+    if(window.CeliInventory.productTotal(p.id)<=0) b.push(`<span class="card__badge card__badge--out">Rasprodano</span>`);
     return b.length ? `<div class="card__badges">${b.join("")}</div>` : "";
+  }
+  function cardColors(p){
+    const cols = window.CeliInventory.colorsOf(p);
+    return cols.length>1 ? `<p class="card__colors">${cols.slice(0,5).map(c=>`<span title="${c.name}" style="background:${c.hex}"></span>`).join("")}</p>` : "";
   }
 
   function renderGrid(){
     const grid = $("#productGrid");
-    const list = PRODUCTS.filter(matches);
+    const list = sortList(PRODUCTS.filter(matches));
     const empty = $("#emptyState");
     empty.hidden = list.length>0;
     empty.textContent = activeFilter==="wishlist"
@@ -80,7 +108,9 @@
         <div class="card__info">
           <h3 class="card__name">${p.name}</h3>
           <p class="card__cat">${catLabel(p.cat)}</p>
+          ${p.rating?`<p class="card__rating">${stars(p.rating)} <span>(${p.reviewsCount})</span></p>`:""}
           <p class="card__price">${money(p.price)}${p.oldPrice?`<del>${money(p.oldPrice)}</del>`:""}</p>
+          ${cardColors(p)}
         </div>
       </article>`).join("");
   }
@@ -226,55 +256,129 @@
 
   /* ---------- quick view modal ---------- */
   const modal = $("#modal");
-  let modalSize = null;
+  const INV = window.CeliInventory;
+  let sel = { id:null, color:null, size:null };
 
   function detailRow(label, val){ return val ? `<div class="details__row"><span>${label}</span><p>${val}</p></div>` : ""; }
 
+  function renderSizes(p){
+    return SIZES.map(s=>{
+      const n = INV.qty(p.id, sel.color, s), out = n<=0;
+      const title = out ? "Rasprodano" : (n<=INV.LOW_STOCK ? "Još "+n+" kom" : "Dostupno");
+      return `<button class="size${s===sel.size?' is-active':''}${out?' is-out':''}" data-size="${s}" ${out?'disabled aria-disabled="true"':''} title="${title}">${s}</button>`;
+    }).join("");
+  }
+  function stockNote(p){
+    const n = INV.qty(p.id, sel.color, sel.size);
+    if(n<=0) return `<span class="stocknote stocknote--out">Rasprodano u veličini ${sel.size}</span>`;
+    if(n<=INV.LOW_STOCK) return `<span class="stocknote stocknote--low">⚡ Još samo ${n} kom u veličini ${sel.size}!</span>`;
+    return `<span class="stocknote stocknote--in">✓ Na zalihi</span>`;
+  }
+  function colorBlock(p){
+    const cols = INV.colorsOf(p);
+    if(cols.length<=1) return p.color?`<p class="modal__colorline"><span class="swatch" style="background:${p.color.hex}"></span>Boja: ${p.color.name}</p>`:"";
+    return `<div class="modal__colors">
+      <p class="modal__label">Boja: <span id="colorName">${sel.color}</span></p>
+      <div class="cswatches" id="cswatches">${cols.map(c=>
+        `<button class="cswatch${c.name===sel.color?' is-active':''}" data-color="${c.name}" title="${c.name}" style="--sw:${c.hex}"><span></span></button>`).join("")}</div>
+    </div>`;
+  }
+  function reviewsBlock(p){
+    if(!p.rating) return "";
+    return `<div class="reviews">
+      <div class="reviews__head"><span class="reviews__avg">${p.rating.toFixed(1)}</span>${stars(p.rating)}
+        <span class="reviews__count">${p.reviewsCount} recenzija</span></div>
+      ${(p.reviews||[]).map(r=>`<div class="review"><div class="review__top"><strong>${r.name}</strong>${stars(r.rating)}</div><p>${r.text}</p></div>`).join("")}
+    </div>`;
+  }
+
+  function refreshAvailability(p){
+    $("#sizeRow").innerHTML = renderSizes(p);
+    bindSizes(p);
+    $("#stockNote").innerHTML = stockNote(p);
+    const n = INV.qty(p.id, sel.color, sel.size);
+    const addBtn = $("#modalAdd"), bis = $("#backInStock");
+    if(n<=0){ addBtn.disabled = true; addBtn.textContent = "Rasprodano"; if(bis) bis.hidden = false; }
+    else { addBtn.disabled = false; addBtn.textContent = "Dodaj u košaricu"; if(bis) bis.hidden = true; }
+  }
+  function bindSizes(p){
+    $$("#sizeRow .size").forEach(b=> b.onclick = ()=>{ if(b.disabled) return; sel.size = b.dataset.size; refreshAvailability(p); });
+  }
+
   function openModal(id){
     const p = byId(id); if(!p) return;
-    modalSize = "M";
+    const cols = INV.colorsOf(p);
+    sel = { id, color: cols[0].name, size: null };
+    sel.size = SIZES.find(s=>INV.qty(id, sel.color, s)>0) || "M";
+
     $("#modalBox").innerHTML = `
       <div class="modal__media" id="modalMedia"></div>
       <div class="modal__info">
         <button class="icon-btn modal__close" id="modalClose" aria-label="Zatvori">✕</button>
         <p class="modal__cat">${catLabel(p.cat)}</p>
         <h2 class="modal__name">${p.name}</h2>
+        ${p.rating?`<p class="modal__rate">${stars(p.rating)} <span>${p.rating.toFixed(1)} · ${p.reviewsCount} recenzija</span></p>`:""}
         <p class="modal__price">${money(p.price)}${p.oldPrice?`<del>${money(p.oldPrice)}</del>`:""}</p>
         <p class="modal__desc">${p.desc}</p>
-        ${p.color?`<p class="modal__colorline"><span class="swatch" style="background:${p.color.hex}"></span>Boja: ${p.color.name}</p>`:""}
+        ${colorBlock(p)}
         <div class="modal__sizehead">
           <p class="modal__label">Veličina</p>
           <button class="sizeguide-link" id="openSizeGuide" type="button">Vodič za veličine</button>
         </div>
-        <div class="sizes">${SIZES.map(s=>`<button class="size${s==='M'?' is-active':''}" data-size="${s}">${s}</button>`).join("")}</div>
+        <div class="sizes" id="sizeRow"></div>
+        <p class="stocknote-wrap" id="stockNote"></p>
         <div class="modal__actions">
           <button class="btn btn--gold" id="modalAdd">Dodaj u košaricu</button>
           <button class="icon-btn modal__wish${isWished(p.id)?' is-on':''}" id="modalWish" data-wish="${p.id}" aria-label="Dodaj u favorite">
             <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 20s-7-4.6-9.3-9.2C1.2 7.9 2.6 5 5.5 5c1.9 0 3.2 1.1 3.9 2.2L12 9l2.6-1.8C15.3 6.1 16.6 5 18.5 5c2.9 0 4.3 2.9 2.8 5.8C19 15.4 12 20 12 20z"/></svg>
           </button>
         </div>
+        <div class="backinstock" id="backInStock" hidden>
+          <p>Trenutno rasprodano u odabranoj veličini/boji. Ostavite e-mail i javljamo čim stigne.</p>
+          <form id="bisForm"><input type="email" placeholder="Vaš e-mail" required /><button class="btn btn--outline" type="submit">Obavijesti me</button></form>
+        </div>
         <div class="details">
           ${detailRow("Materijal", p.fabric)}
           ${detailRow("Kroj", p.fit)}
           ${detailRow("Održavanje", p.care)}
         </div>
+        ${reviewsBlock(p)}
       </div>`;
 
     buildViewer(p, $("#modalMedia"));
     modal.classList.add("open");
     modal.setAttribute("aria-hidden","false");
     document.body.style.overflow="hidden";
+    if(history.replaceState) history.replaceState(null,"","#p="+id);
 
     $("#modalClose").onclick = closeModal;
     $("#openSizeGuide").onclick = openSizeGuide;
     $("#modalWish").onclick = ()=> toggleWish(p.id);
-    $("#modalBox").querySelectorAll(".size").forEach(b=>{
-      b.onclick = ()=>{ modalSize=b.dataset.size;
-        $("#modalBox").querySelectorAll(".size").forEach(x=>x.classList.toggle("is-active",x===b)); };
+    const cs = $("#cswatches");
+    if(cs) cs.querySelectorAll(".cswatch").forEach(b=> b.onclick = ()=>{
+      sel.color = b.dataset.color;
+      cs.querySelectorAll(".cswatch").forEach(x=>x.classList.toggle("is-active", x===b));
+      const cn = $("#colorName"); if(cn) cn.textContent = sel.color;
+      sel.size = SIZES.find(s=>INV.qty(p.id, sel.color, s)>0) || sel.size;
+      refreshAvailability(p);
     });
-    $("#modalAdd").onclick = ()=>{ addToCart(p.id, modalSize); closeModal(); openCart(); };
+    const bisForm = $("#bisForm");
+    if(bisForm) bisForm.onsubmit = e=>{ e.preventDefault();
+      try{ const a=load("celi_bis_v1"); a.push({id, color:sel.color, size:sel.size, email:e.target.querySelector("input").value, at:Date.now()}); localStorage.setItem("celi_bis_v1", JSON.stringify(a)); }catch{}
+      e.target.reset(); toast("Javit ćemo vam čim haljina bude dostupna ✦"); };
+    $("#modalAdd").onclick = ()=>{
+      if(INV.qty(p.id, sel.color, sel.size)<=0){ toast("Odabrana varijanta je rasprodana"); return; }
+      if(!addToCart(p.id, sel.color, sel.size)) return;
+      closeModal(); openCart();
+    };
+
+    refreshAvailability(p);
+    addToRecent(id);
   }
-  function closeModal(){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); document.body.style.overflow=""; }
+  function closeModal(){
+    modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); document.body.style.overflow="";
+    if(history.replaceState && /#p=/.test(location.hash)) history.replaceState(null,"",location.pathname+location.search);
+  }
   $("#modalOverlay").onclick = closeModal;
 
   $("#productGrid").addEventListener("click", e=>{
@@ -289,27 +393,51 @@
   $("#sizeClose").onclick = closeSizeGuide;
   $("#sizeOverlay").onclick = closeSizeGuide;
 
-  /* ---------- cart ---------- */
-  function addToCart(id, size="M"){
-    const line = cart.find(i=>i.id===id && i.size===size);
-    if(line) line.qty++; else cart.push({id, size, qty:1});
+  /* ---------- cart (keyed by model × boja × veličina) ---------- */
+  function defaultColor(id){ const p=byId(id); return p ? INV.colorsOf(p)[0].name : "Standard"; }
+  function normalizeCart(){ cart.forEach(i=>{ if(!i.color) i.color = defaultColor(i.id); }); }
+  function sameLine(i,id,color,size){ return i.id===id && i.color===color && i.size===size; }
+
+  function addToCart(id, color, size="M"){
+    color = color || defaultColor(id);
+    const inStock = INV.qty(id, color, size);
+    const line = cart.find(i=>sameLine(i,id,color,size));
+    const have = line ? line.qty : 0;
+    if(have+1 > inStock){ toast("Nema više komada na zalihi za tu varijantu"); return false; }
+    if(line) line.qty++; else cart.push({id, color, size, qty:1});
     save(); renderCart(); bumpCount();
     const p = byId(id);
-    toast(`${p.name} (${size}) dodano u košaricu`);
+    toast(`${p.name} (${color}, ${size}) dodano u košaricu`);
+    return true;
   }
-  function changeQty(id,size,d){
-    const line = cart.find(i=>i.id===id && i.size===size); if(!line) return;
+  function changeQty(id,color,size,d){
+    const line = cart.find(i=>sameLine(i,id,color,size)); if(!line) return;
+    if(d>0 && line.qty+1 > INV.qty(id,color,size)){ toast("Dosegnut maksimum na zalihi"); return; }
     line.qty += d;
     if(line.qty<=0) cart = cart.filter(i=>i!==line);
     save(); renderCart();
   }
-  function removeLine(id,size){ cart = cart.filter(i=>!(i.id===id&&i.size===size)); save(); renderCart(); }
+  function removeLine(id,color,size){ cart = cart.filter(i=>!sameLine(i,id,color,size)); save(); renderCart(); }
   function cartTotal(){ return cart.reduce((s,i)=>s + byId(i.id).price*i.qty, 0); }
   function cartCount(){ return cart.reduce((s,i)=>s+i.qty,0); }
 
   function bumpCount(){
     const el = $("#cartCount"); el.textContent = cartCount();
     el.style.transform="scale(1.4)"; setTimeout(()=>el.style.transform="",180);
+  }
+
+  function renderFreeShip(total){
+    const bar = $("#freeShip"); if(!bar) return;
+    if(total<=0){ bar.hidden = true; return; }
+    bar.hidden = false;
+    if(total>=FREE_SHIP){
+      bar.innerHTML = `<p class="fship__msg fship__msg--done">✓ Ostvarili ste besplatnu dostavu!</p>
+        <div class="fship__track"><span style="width:100%"></span></div>`;
+    } else {
+      const left = FREE_SHIP-total, pct = Math.min(100, Math.round(total/FREE_SHIP*100));
+      bar.innerHTML = `<p class="fship__msg">Još <strong>${money(left)}</strong> do besplatne dostave</p>
+        <div class="fship__track"><span style="width:${pct}%"></span></div>`;
+    }
   }
 
   function renderCart(){
@@ -319,17 +447,18 @@
     } else {
       body.innerHTML = cart.map(i=>{
         const p = byId(i.id);
+        const dataAttr = `data-id="${i.id}" data-color="${i.color}" data-size="${i.size}"`;
         return `<div class="citem">
           <div class="citem__img">${productMedia(p)}</div>
           <div>
             <p class="citem__name">${p.name}</p>
-            <p class="citem__meta">${catLabel(p.cat)} · ${i.size}</p>
+            <p class="citem__meta">${i.color} · ${i.size}</p>
             <div class="qty">
-              <button data-act="dec" data-id="${i.id}" data-size="${i.size}">−</button>
+              <button data-act="dec" ${dataAttr}>−</button>
               <span>${i.qty}</span>
-              <button data-act="inc" data-id="${i.id}" data-size="${i.size}">+</button>
+              <button data-act="inc" ${dataAttr}>+</button>
             </div>
-            <br/><button class="citem__remove" data-act="rm" data-id="${i.id}" data-size="${i.size}">Ukloni</button>
+            <br/><button class="citem__remove" data-act="rm" ${dataAttr}>Ukloni</button>
           </div>
           <div class="citem__price">${money(p.price*i.qty)}</div>
         </div>`;
@@ -339,14 +468,15 @@
     const ship = total>=FREE_SHIP || total===0 ? "" : ` (+ dostava)`;
     $("#cartTotal").textContent = money(total)+ship;
     $("#cartCount").textContent = cartCount();
+    renderFreeShip(total);
   }
 
   $("#cartBody").addEventListener("click", e=>{
     const b = e.target.closest("[data-act]"); if(!b) return;
-    const id=+b.dataset.id, size=b.dataset.size;
-    if(b.dataset.act==="inc") changeQty(id,size,1);
-    if(b.dataset.act==="dec") changeQty(id,size,-1);
-    if(b.dataset.act==="rm")  removeLine(id,size);
+    const id=+b.dataset.id, color=b.dataset.color, size=b.dataset.size;
+    if(b.dataset.act==="inc") changeQty(id,color,size,1);
+    if(b.dataset.act==="dec") changeQty(id,color,size,-1);
+    if(b.dataset.act==="rm")  removeLine(id,color,size);
   });
 
   /* ---------- cart drawer open/close ---------- */
@@ -367,7 +497,7 @@
     let msg = "Pozdrav CELI! Želim naručiti:%0A%0A";
     cart.forEach(i=>{
       const p = byId(i.id);
-      msg += `• ${p.name} (${i.size}) ×${i.qty} — ${money(p.price*i.qty)}%0A`;
+      msg += `• ${p.name} (${i.color}, ${i.size}) ×${i.qty} — ${money(p.price*i.qty)}%0A`;
     });
     msg += `%0AUkupno: ${money(cartTotal())}%0A%0AMolim potvrdu dostupnosti i dostave. Hvala!`;
     window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, "_blank");
@@ -382,9 +512,33 @@
 
   /* ---------- newsletter ---------- */
   $("#newsletterForm").addEventListener("submit", e=>{
-    e.preventDefault(); e.target.reset();
+    e.preventDefault();
+    try{ const email=e.target.querySelector("input").value;
+      const a=load("celi_news_v1"); a.push({email, at:Date.now()}); localStorage.setItem("celi_news_v1", JSON.stringify(a)); }catch{}
+    e.target.reset();
     $("#newsletterMsg").hidden = false;
   });
+
+  /* ---------- recently viewed ---------- */
+  const RECENT_KEY = "celi_recent_v1";
+  function addToRecent(id){
+    let r = load(RECENT_KEY).filter(x=>x!==id); r.unshift(id); r = r.slice(0,8);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(r)); renderRecent();
+  }
+  function renderRecent(){
+    const sec = $("#recent"); if(!sec) return;
+    const ids = load(RECENT_KEY).filter(id=>byId(id));
+    if(ids.length<2){ sec.hidden = true; return; }
+    sec.hidden = false;
+    $("#recentRow").innerHTML = ids.map(id=>{ const p=byId(id);
+      return `<button class="rcard" data-quick="${id}">
+        <span class="rcard__img">${productMedia(p)}</span>
+        <span class="rcard__name">${p.name}</span>
+        <span class="rcard__price">${money(p.price)}</span>
+      </button>`; }).join("");
+  }
+  const recentRow = $("#recentRow");
+  if(recentRow) recentRow.addEventListener("click", e=>{ const b=e.target.closest("[data-quick]"); if(b) openModal(+b.dataset.quick); });
 
   /* ---------- toast ---------- */
   let toastT;
@@ -392,6 +546,22 @@
     const t = $("#toast"); t.textContent = msg; t.classList.add("show");
     clearTimeout(toastT); toastT = setTimeout(()=>t.classList.remove("show"), 2400);
   }
+
+  /* ---------- color filter + sort ---------- */
+  function buildColorFilter(){
+    const el = $("#colorFilter"); if(!el) return;
+    const seen = new Map();
+    PRODUCTS.forEach(p=> INV.colorsOf(p).forEach(c=>{ if(!seen.has(c.name)) seen.set(c.name, c.hex); }));
+    el.innerHTML = `<button class="cdot cdot--all is-active" data-color="">Sve boje</button>` +
+      [...seen].map(([name,hex])=>`<button class="cdot" data-color="${name}" title="${name}"><span style="background:${hex}"></span></button>`).join("");
+    el.addEventListener("click", e=>{ const b=e.target.closest(".cdot"); if(!b) return;
+      activeColor = b.dataset.color || null;
+      el.querySelectorAll(".cdot").forEach(x=>x.classList.toggle("is-active", x===b));
+      renderGrid();
+    });
+  }
+  const sortSelect = $("#sortSelect");
+  if(sortSelect) sortSelect.addEventListener("change", e=>{ sortBy = e.target.value; renderGrid(); });
 
   /* ---------- SEO: Product structured data ---------- */
   function injectJsonLd(){
@@ -405,8 +575,10 @@
             image: new URL(productImages(p)[0]||"", location.href).href,
             description:p.desc, category:catLabel(p.cat),
             brand:{"@type":"Brand", name:"CELI Official"},
+            ...(p.rating?{aggregateRating:{"@type":"AggregateRating", ratingValue:p.rating, reviewCount:p.reviewsCount}}:{}),
             offers:{"@type":"Offer", price:p.price, priceCurrency:"BAM",
-              availability:"https://schema.org/InStock", url:location.href}
+              availability: INV.productTotal(p.id)>0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              url:location.href}
           }
         }))
       };
@@ -416,6 +588,9 @@
       document.head.appendChild(s);
     }catch{}
   }
+
+  /* ---------- deep link (#p=ID opens product) ---------- */
+  function checkDeepLink(){ const m=(location.hash||"").match(/p=(\d+)/); if(m) openModal(+m[1]); }
 
   /* ---------- misc ---------- */
   document.addEventListener("keydown", e=>{
@@ -432,8 +607,12 @@
   });
 
   /* ---------- init ---------- */
+  normalizeCart();
+  buildColorFilter();
   renderGrid();
   renderCart();
   updateWishCount();
+  renderRecent();
   injectJsonLd();
+  checkDeepLink();
 })();

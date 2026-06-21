@@ -17,12 +17,25 @@ Statička stranica — HTML / CSS / vanilla JavaScript, bez build koraka i bez v
 - **Brzi pregled** (quick view) s odabirom veličine i detaljima (materijal, kroj, održavanje).
 - **Košarica** s trajnim spremanjem (`localStorage`) — količine, uklanjanje, ukupna cijena.
 - **Checkout** — kartica/PayPal, pouzeće, bankovni transfer + WhatsApp narudžba.
-- **SEO** — Open Graph/Twitter kartice i strukturirani podaci (schema.org `Product`).
+- **Varijante boja** — swatch odabir boje + točkice boja na karticama.
+- **Stvarne zalihe** — dostupnost po veličini (rasprodano = onemogućeno), urgentnost
+  „⚡ Još samo N kom", oznaka „Rasprodano", te **back-in-stock** obavijest.
+- **Recenzije i ocjene** (★) na karticama i u modalu.
+- **Filtri po boji + sortiranje** (cijena, ocjena, novo).
+- **Besplatna dostava — progres bar** i **Nedavno pregledano**.
+- **Evidencija zaliha (admin panel)** — `admin.html`: SKU = model × boja × veličina,
+  KPI, upozorenja, izmjena količina, kretanje zaliha, narudžbe, izvoz/uvoz.
+- **Automatsko skidanje sa zalihe** pri narudžbi + zapis narudžbe.
+- **Info/pravne stranice** — `info.html` (dostava, povrat, privatnost, uvjeti).
+- **SEO** — Open Graph/Twitter kartice i strukturirani podaci (schema.org `Product` + ocjene).
 - **Potpuno responzivno** (mobitel, tablet, desktop) s mobilnim izbornikom.
 - **Otporno na offline** — ako 3D komponenta ili fotografija nisu dostupne, viewer
   graciozno pada na fotografiju/SVG ilustraciju.
 
-> 📄 Detaljan audit i plan razvoja: vidi **[ANALIZA-I-PREPORUKE.md](ANALIZA-I-PREPORUKE.md)**.
+> 📄 Dokumentacija:
+> **[ANALIZA-I-PREPORUKE.md](ANALIZA-I-PREPORUKE.md)** (audit i plan) ·
+> **[ISTRAZIVANJE-KONKURENCIJE.md](ISTRAZIVANJE-KONKURENCIJE.md)** (najbolje prakse) ·
+> **[EVIDENCIJA-ZALIHA.md](EVIDENCIJA-ZALIHA.md)** (skladište/inventar).
 
 ## Pokretanje
 
@@ -36,17 +49,24 @@ python3 -m http.server 8000
 ## Struktura
 
 ```
-index.html              – stranica i sve sekcije
-checkout.html           – stranica plaćanja
-css/styles.css          – kompletan stil i responsive
-js/products.js          – podaci o haljinama + media helperi (galerija/3D)
-js/app.js               – logika: filteri, pretraga, košarica, viewer, wishlist, SEO
-js/checkout.js          – checkout, plaćanje, sažetak narudžbe
-assets/                 – favicon i logo
-assets/products/        – fotografije haljina
-assets/models/          – 3D modeli (.glb) za interaktivni / AR pregled
-tools/make_gown_glb.py  – generator demo 3D modela haljine (bez vanjskih biblioteka)
-ANALIZA-I-PREPORUKE.md  – audit i plan razvoja (modni + web dizajn)
+index.html               – trgovina i sve sekcije
+checkout.html            – stranica plaćanja
+admin.html               – panel za evidenciju zaliha (skladište)
+info.html                – dostava / povrat / privatnost / uvjeti
+css/styles.css           – kompletan stil i responsive
+js/products.js           – podaci o haljinama (boje, recenzije, zalihe) + media helperi
+js/inventory.js          – inventar (SKU = model × boja × veličina), zajednički modul
+js/app.js                – trgovina: filteri, viewer, košarica, wishlist, zalihe, SEO
+js/checkout.js           – checkout, plaćanje, skidanje zaliha, zapis narudžbe
+js/admin.js              – admin panel za zalihe
+assets/products/         – fotografije haljina
+assets/models/           – 3D modeli (.glb) za interaktivni / AR pregled
+assets/spin/             – sličice za 360° pregled
+tools/make_gown_glb.py   – generator demo 3D modela (bez vanjskih biblioteka)
+tools/make_spin.py       – generator 360° sličica (softverski render)
+ANALIZA-I-PREPORUKE.md   – audit i plan razvoja (modni + web dizajn)
+ISTRAZIVANJE-KONKURENCIJE.md – najbolje prakse konkurencije
+EVIDENCIJA-ZALIHA.md     – upute za inventar/skladište
 ```
 
 ## 3D / AR pregled

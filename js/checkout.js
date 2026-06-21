@@ -44,9 +44,10 @@
     }
     box.innerHTML = cart.map(i=>{
       const p = byId(i.id);
+      const variant = (i.color?i.color+" · ":"") + i.size;
       return `<div class="sum-item">
         <div class="sum-item__img">${productMedia(p)}<span class="sum-item__q">${i.qty}</span></div>
-        <div class="sum-item__info"><p class="sum-item__name">${p.name}</p><p class="sum-item__meta">${catLabel(p.cat)} · ${i.size}</p></div>
+        <div class="sum-item__info"><p class="sum-item__name">${p.name}</p><p class="sum-item__meta">${variant}</p></div>
         <div class="sum-item__price">${money(p.price*i.qty)}</div>
       </div>`;
     }).join("");
@@ -97,10 +98,29 @@
   function orderId(){ return "CELI-" + Date.now().toString().slice(-6); }
 
   /* ---------- complete order ---------- */
+  function saveOrder(method, oid){
+    try{
+      const c = customer();
+      const order = {
+        id: oid, at: Date.now(), method, status:"zaprimljeno",
+        customer: c,
+        items: cart.map(i=>{ const p=byId(i.id);
+          return { id:i.id, name:p.name, color:i.color||"", size:i.size, qty:i.qty, price:p.price }; }),
+        subtotal: subtotal(), shipping: shipping(), total: total()
+      };
+      const arr = JSON.parse(localStorage.getItem("celi_orders_v1")||"[]");
+      arr.unshift(order);
+      localStorage.setItem("celi_orders_v1", JSON.stringify(arr));
+    }catch{}
+  }
+
   function complete(method, oid){
     const labels = { card:"Plaćanje karticom uspješno je obrađeno.",
                      cod:"Narudžba je zaprimljena — platit ćete pouzećem pri dostavi.",
                      bank:"Narudžba je zaprimljena — predračun s podacima za uplatu poslat ćemo na vaš e-mail." };
+    // 1) skini sa zalihe, 2) spremi narudžbu, pa tek onda isprazni košaricu
+    if(window.CeliInventory) window.CeliInventory.decrementOrder(cart, oid);
+    saveOrder(method, oid);
     $("#confirmMsg").textContent = labels[method] || "Narudžba je zaprimljena.";
     $("#orderId").textContent = oid;
     clearCart();
@@ -123,7 +143,7 @@
     if(!cart.length){ toast("Košarica je prazna"); return; }
     const c = customer();
     let msg = "Pozdrav CELI! Želim naručiti:%0A%0A";
-    cart.forEach(i=>{ const p=byId(i.id); msg+=`• ${p.name} (${i.size}) ×${i.qty} — ${money(p.price*i.qty)}%0A`; });
+    cart.forEach(i=>{ const p=byId(i.id); const v=(i.color?i.color+", ":"")+i.size; msg+=`• ${p.name} (${v}) ×${i.qty} — ${money(p.price*i.qty)}%0A`; });
     msg += `%0AUkupno: ${money(total())}%0A`;
     if(c.ime||c.adresa) msg += `%0AIme: ${c.ime} ${c.prezime}%0AAdresa: ${c.adresa}, ${c.posta} ${c.grad}%0ATelefon: ${c.telefon}`;
     window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, "_blank");

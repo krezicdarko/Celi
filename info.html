@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Informacije — CELI Official</title>
+  <meta name="description" content="Dostava, povrat i zamjena, privatnost i uvjeti kupnje — CELI Official." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Pinyon+Script&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="checkout-page">
+
+  <header class="header">
+    <div class="container header__inner header__inner--checkout">
+      <a href="index.html" class="logo" aria-label="CELI Official početna">
+        <span class="logo__script">Celi</span>
+        <span class="logo__sub">O F F I C I A L</span>
+      </a>
+      <a href="index.html" class="back-link">← Trgovina</a>
+    </div>
+  </header>
+
+  <main class="container info">
+    <h1 class="co__title">Informacije</h1>
+
+    <nav class="info__nav">
+      <a href="#dostava">Dostava</a>
+      <a href="#povrat">Povrat i zamjena</a>
+      <a href="#privatnost">Privatnost</a>
+      <a href="#uvjeti">Uvjeti kupnje</a>
+    </nav>
+
+    <section class="info__sec" id="dostava">
+      <h2>Dostava</h2>
+      <p>Dostavljamo po cijeloj Bosni i Hercegovini te u regiju (Hrvatska, Srbija, Crna Gora).</p>
+      <ul>
+        <li>Besplatna dostava za narudžbe iznad <strong>150 KM</strong>.</li>
+        <li>Standardna dostava: <strong>7 KM</strong> (BiH), 2–4 radna dana.</li>
+        <li>Regija: cijena i rok ovise o odredištu — javljamo prije slanja.</li>
+        <li>Pakete šaljemo putem provjerenih kurirskih službi uz broj za praćenje.</li>
+      </ul>
+    </section>
+
+    <section class="info__sec" id="povrat">
+      <h2>Povrat i zamjena</h2>
+      <p>Želimo da haljina savršeno pristaje. Ako nešto nije kako treba:</p>
+      <ul>
+        <li>Zamjena veličine moguća je u roku od <strong>14 dana</strong> od primitka.</li>
+        <li>Artikl mora biti nenošen, neoštećen, s originalnim etiketama.</li>
+        <li>Trošak povrata kod zamjene veličine snosi kupac, osim u slučaju greške s naše strane.</li>
+        <li>Za povrat novca kontaktirajte nas na <a href="mailto:info@celi.ba">info@celi.ba</a> ili WhatsApp.</li>
+      </ul>
+      <p class="info__note">Napomena: rasprodani sniženi artikli mogu imati ograničen povrat (zamjena veličine ako je dostupna).</p>
+    </section>
+
+    <section class="info__sec" id="privatnost">
+      <h2>Privatnost (GDPR)</h2>
+      <p>Vaše podatke koristimo isključivo za obradu i dostavu narudžbe te, uz vašu privolu, za slanje novosti.</p>
+      <ul>
+        <li>Ne dijelimo podatke s trećima osim s kurirskom i platnom službom radi isporuke.</li>
+        <li>Imate pravo na uvid, ispravak i brisanje svojih podataka.</li>
+        <li>Plaćanje karticom obrađuje se sigurno kod ovlaštenog pružatelja (npr. PayPal/Stripe).</li>
+        <li>Upit o podacima: <a href="mailto:info@celi.ba">info@celi.ba</a>.</li>
+      </ul>
+    </section>
+
+    <section class="info__sec" id="uvjeti">
+      <h2>Uvjeti kupnje</h2>
+      <ul>
+        <li>Cijene su izražene u KM (BAM) i uključuju PDV.</li>
+        <li>Narudžba je potvrđena nakon uspješne uplate ili potvrde pouzeća.</li>
+        <li>Zadržavamo pravo izmjene cijena i dostupnosti artikala.</li>
+        <li>Fotografije su informativne; nijanse mogu blago odstupati ovisno o ekranu.</li>
+        <li>Za sve upite stojimo na raspolaganju putem e-maila i WhatsApp-a.</li>
+      </ul>
+      <p class="info__note">CELI d.o.o., Mepas Mall, Kardinala Stepinca bb, 88000 Mostar, BiH · info@celi.ba · +387 63 008 800</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__bottom">
+      <div class="container">
+        <span>© <span id="year"></span> CELI Official. Sva prava pridržana.</span>
+        <span>info@celi.ba · +387 63 008 800</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById("year").textContent=new Date().getFullYear();</script>
+</body>
+</html>

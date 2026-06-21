@@ -121,8 +121,30 @@
       <button class="chip chip--wish" data-filter="wishlist">♡ Favoriti</button>
     </div>
 
+    <div class="subfilters">
+      <div class="colorfilter" id="colorFilter" aria-label="Filter po boji"></div>
+      <label class="sortbox">Sortiraj:
+        <select id="sortSelect">
+          <option value="featured">Preporučeno</option>
+          <option value="price-asc">Cijena: niža → viša</option>
+          <option value="price-desc">Cijena: viša → niža</option>
+          <option value="rating">Najbolje ocijenjeno</option>
+          <option value="new">Novo</option>
+        </select>
+      </label>
+    </div>
+
     <div class="grid" id="productGrid"><!-- products injected by JS --></div>
     <p class="empty" id="emptyState" hidden>Nema haljina koje odgovaraju pretrazi.</p>
+  </section>
+
+  <!-- Recently viewed -->
+  <section class="recent container" id="recent" hidden>
+    <div class="section-head section-head--left">
+      <p class="eyebrow">Nedavno pregledano</p>
+      <h2>Vaš odabir</h2>
+    </div>
+    <div class="recent__row" id="recentRow"></div>
   </section>
 
   <!-- Feature strip -->
@@ -178,16 +200,17 @@
         <p>Mepas Mall<br/>Kardinala Stepinca bb<br/>88000 Mostar, BiH</p>
       </div>
       <div class="footer__col">
-        <h5>Pratite nas</h5>
-        <p><a href="https://www.instagram.com/celi.officiel/" target="_blank" rel="noopener">Instagram</a></p>
-        <p><a href="#shop">Kolekcija</a></p>
-        <p><a href="#about">O nama</a></p>
+        <h5>Informacije</h5>
+        <p><a href="info.html#dostava">Dostava</a></p>
+        <p><a href="info.html#povrat">Povrat i zamjena</a></p>
+        <p><a href="info.html#privatnost">Privatnost</a></p>
+        <p><a href="info.html#uvjeti">Uvjeti kupnje</a></p>
       </div>
     </div>
     <div class="footer__bottom">
       <div class="container">
         <span>© <span id="year"></span> CELI Official. Sva prava pridržana.</span>
-        <span>Izrada: webshop demo</span>
+        <span><a href="admin.html" class="footer__admin">Upravljanje zalihama →</a></span>
       </div>
     </div>
   </footer>
@@ -201,6 +224,7 @@
     </div>
     <div class="cart__body" id="cartBody"><!-- items --></div>
     <div class="cart__foot">
+      <div class="fship" id="freeShip" hidden></div>
       <div class="cart__total"><span>Ukupno</span><strong id="cartTotal">0 KM</strong></div>
       <a class="btn btn--gold btn--block" id="checkoutBtn" href="checkout.html">Nastavi na plaćanje</a>
       <button class="btn btn--outline btn--block cart__wa" id="whatsappBtn">Naruči putem WhatsApp-a</button>
@@ -248,6 +272,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="js/products.js"></script>
+  <script src="js/inventory.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skladište — CELI Official</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Pinyon+Script&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="admin-page">
+
+  <header class="header">
+    <div class="container header__inner header__inner--checkout">
+      <a href="index.html" class="logo" aria-label="CELI Official početna">
+        <span class="logo__script">Celi</span>
+        <span class="logo__sub">O F F I C I A L</span>
+      </a>
+      <a href="index.html" class="back-link">← Trgovina</a>
+    </div>
+  </header>
+
+  <main class="container admin">
+    <div class="admin__head">
+      <div>
+        <p class="eyebrow">Interno · Skladište</p>
+        <h1 class="admin__title">Evidencija zaliha</h1>
+        <p class="admin__sub">Stanje po modelu, boji i veličini (SKU). Promjene se spremaju automatski.</p>
+      </div>
+      <div class="admin__tools">
+        <button class="btn btn--outline" id="btnExport">Izvezi (JSON)</button>
+        <label class="btn btn--outline" for="fileImport">Uvezi</label>
+        <input type="file" id="fileImport" accept="application/json" hidden />
+        <button class="btn btn--outline" id="btnReset">Vrati zadano</button>
+      </div>
+    </div>
+
+    <!-- KPI cards -->
+    <section class="kpis" id="stats"></section>
+
+    <!-- Alerts -->
+    <section class="admin-block">
+      <div class="admin-block__head">
+        <h2>Upozorenja zaliha</h2>
+        <span class="admin-block__hint">Niska zaliha ≤ <span id="lowThresh">3</span> kom · Točka narudžbe ≤ <span id="reorderPt">5</span> kom</span>
+      </div>
+      <div id="alerts" class="alerts"></div>
+    </section>
+
+    <!-- Inventory table -->
+    <section class="admin-block">
+      <div class="admin-block__head">
+        <h2>Zalihe po artiklu</h2>
+        <div class="admin-filter">
+          <input type="search" id="search" placeholder="Traži model ili boju…" />
+          <label class="admin-check"><input type="checkbox" id="lowOnly" /> Samo niska/rasprodano</label>
+        </div>
+      </div>
+      <div id="invTable" class="invtable"></div>
+    </section>
+
+    <div class="admin-cols">
+      <!-- Movements -->
+      <section class="admin-block">
+        <div class="admin-block__head"><h2>Kretanje zaliha</h2></div>
+        <div id="log" class="log"></div>
+      </section>
+      <!-- Orders -->
+      <section class="admin-block">
+        <div class="admin-block__head"><h2>Narudžbe</h2></div>
+        <div id="orders" class="orders"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__bottom">
+      <div class="container">
+        <span>© <span id="year"></span> CELI Official — interni panel</span>
+        <span>Demo: podaci u localStorage. Za produkciju spojiti na bazu/backend.</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/products.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

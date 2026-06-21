@@ -181,8 +181,12 @@
   $("#cartClose").onclick  = closeCart;
   overlay.onclick = ()=>{ closeCart(); closeNav(); };
 
-  /* ---------- checkout via WhatsApp ---------- */
-  $("#checkoutBtn").onclick = ()=>{
+  /* ---------- checkout ---------- */
+  $("#checkoutBtn").addEventListener("click", e=>{
+    if(!cart.length){ e.preventDefault(); toast("Košarica je prazna"); }
+  });
+
+  $("#whatsappBtn").onclick = ()=>{
     if(!cart.length){ toast("Košarica je prazna"); return; }
     let msg = "Pozdrav CELI! Želim naručiti:%0A%0A";
     cart.forEach(i=>{

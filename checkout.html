@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plaćanje — CELI Official</title>
+  <meta name="description" content="Sigurno plaćanje — CELI Official webshop." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Pinyon+Script&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="checkout-page">
+
+  <header class="header">
+    <div class="container header__inner header__inner--checkout">
+      <a href="index.html" class="logo" aria-label="CELI Official početna">
+        <span class="logo__script">Celi</span>
+        <span class="logo__sub">O F F I C I A L</span>
+      </a>
+      <a href="index.html" class="back-link">← Nastavi kupovinu</a>
+    </div>
+  </header>
+
+  <main class="container co">
+    <h1 class="co__title">Plaćanje</h1>
+
+    <div class="co__grid" id="coGrid">
+      <!-- LEFT: form -->
+      <section class="co__form">
+        <h2 class="co__h">Podaci za dostavu</h2>
+        <form id="shipForm" novalidate>
+          <div class="field-row">
+            <label class="field"><span>Ime *</span><input name="ime" required /></label>
+            <label class="field"><span>Prezime *</span><input name="prezime" required /></label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span>E-mail *</span><input type="email" name="email" required /></label>
+            <label class="field"><span>Telefon *</span><input name="telefon" required placeholder="+387…" /></label>
+          </div>
+          <label class="field"><span>Adresa *</span><input name="adresa" required /></label>
+          <div class="field-row">
+            <label class="field"><span>Grad *</span><input name="grad" required /></label>
+            <label class="field"><span>Poštanski broj *</span><input name="posta" required /></label>
+          </div>
+          <label class="field"><span>Država</span>
+            <select name="drzava">
+              <option>Bosna i Hercegovina</option>
+              <option>Hrvatska</option>
+              <option>Srbija</option>
+              <option>Crna Gora</option>
+              <option>Ostalo</option>
+            </select>
+          </label>
+          <label class="field"><span>Napomena (nije obavezno)</span><textarea name="napomena" rows="2"></textarea></label>
+
+          <h2 class="co__h">Način plaćanja</h2>
+          <div class="pay">
+            <label class="pay__opt is-active">
+              <input type="radio" name="pay" value="card" checked />
+              <span class="pay__main"><strong>Kartično plaćanje</strong><small>Visa · Mastercard · PayPal</small></span>
+              <span class="pay__icons">💳</span>
+            </label>
+            <label class="pay__opt">
+              <input type="radio" name="pay" value="cod" />
+              <span class="pay__main"><strong>Plaćanje pouzećem</strong><small>Platite gotovinom pri preuzimanju</small></span>
+              <span class="pay__icons">📦</span>
+            </label>
+            <label class="pay__opt">
+              <input type="radio" name="pay" value="bank" />
+              <span class="pay__main"><strong>Bankovni transfer</strong><small>Uplata na žiro račun (predračun)</small></span>
+              <span class="pay__icons">🏦</span>
+            </label>
+          </div>
+
+          <!-- Card / PayPal -->
+          <div class="pay-panel" id="panel-card">
+            <p class="pay-panel__note">Plaćanje karticom obrađuje se sigurno preko PayPal-a u EUR (BAM je vezan za EUR po fiksnom tečaju).</p>
+            <div id="paypal-buttons"></div>
+            <p class="pay-fallback" id="paypalFallback" hidden>
+              ⚠️ PayPal trenutno nije konfiguriran s pravim računom (koristi se demo). Za stvarne uplate
+              unesite svoj <strong>PayPal Client ID</strong> u <code>js/checkout.js</code>. U međuvremenu
+              možete naručiti pouzećem, bankovnim transferom ili putem WhatsApp-a.
+            </p>
+          </div>
+
+          <!-- COD -->
+          <div class="pay-panel" id="panel-cod" hidden>
+            <p class="pay-panel__note">Narudžbu plaćate gotovinom dostavljaču pri preuzimanju paketa.</p>
+            <button type="button" class="btn btn--gold btn--block" id="placeCod">Potvrdi narudžbu (pouzeće)</button>
+          </div>
+
+          <!-- Bank -->
+          <div class="pay-panel" id="panel-bank" hidden>
+            <div class="bank-box">
+              <p><strong>Primatelj:</strong> CELI d.o.o., Mostar</p>
+              <p><strong>IBAN:</strong> BA39 0000 0000 0000 0000</p>
+              <p><strong>Banka:</strong> (vaša banka)</p>
+              <p><strong>Poziv na broj:</strong> <span id="bankRef">—</span></p>
+              <p class="bank-note">Iznos i poziv na broj prikazat će se nakon potvrde. Predračun šaljemo na e-mail.</p>
+            </div>
+            <button type="button" class="btn btn--gold btn--block" id="placeBank">Potvrdi narudžbu (transfer)</button>
+          </div>
+
+          <button type="button" class="btn btn--outline btn--block co__wa" id="coWhatsapp">ili naruči putem WhatsApp-a</button>
+        </form>
+      </section>
+
+      <!-- RIGHT: summary -->
+      <aside class="co__summary">
+        <h2 class="co__h">Vaša narudžba</h2>
+        <div id="summaryItems"></div>
+        <div class="sum-line"><span>Međuzbroj</span><span id="sumSubtotal">0 KM</span></div>
+        <div class="sum-line"><span>Dostava</span><span id="sumShip">—</span></div>
+        <div class="sum-line sum-total"><span>Ukupno</span><strong id="sumTotal">0 KM</strong></div>
+        <p class="sum-eur" id="sumEur"></p>
+        <p class="sum-secure">🔒 Sigurna kupovina · SSL zaštita podataka</p>
+      </aside>
+    </div>
+
+    <!-- Confirmation -->
+    <div class="confirm" id="confirm" hidden>
+      <div class="confirm__box">
+        <div class="confirm__check">✓</div>
+        <h2>Hvala na narudžbi!</h2>
+        <p id="confirmMsg"></p>
+        <p class="confirm__id">Broj narudžbe: <strong id="orderId"></strong></p>
+        <a href="index.html" class="btn btn--gold">Natrag na trgovinu</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__bottom">
+      <div class="container">
+        <span>© <span id="year"></span> CELI Official. Sva prava pridržana.</span>
+        <span>info@celi.ba · +387 63 008 800</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/products.js"></script>
+  <script src="js/checkout.js"></script>
+</body>
+</html>

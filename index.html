@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CELI Official — Elegantne haljine | Mostar</title>
+  <meta name="description" content="CELI Official — butik elegantnih i svečanih haljina iz Mostara. Otkrijte novu kolekciju i naručite online." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Pinyon+Script&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Top announcement bar -->
+  <div class="announce">
+    Besplatna dostava za narudžbe iznad <strong>150 KM</strong> &nbsp;·&nbsp; Nova kolekcija 2026 je stigla
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <button class="icon-btn nav-toggle" id="navToggle" aria-label="Izbornik">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="nav" id="nav">
+        <a href="#shop" data-filter="all">Sve haljine</a>
+        <a href="#shop" data-filter="svecane">Svečane</a>
+        <a href="#shop" data-filter="koktel">Koktel</a>
+        <a href="#shop" data-filter="dnevne">Dnevne</a>
+        <a href="#about">O nama</a>
+        <a href="#contact">Kontakt</a>
+      </nav>
+
+      <a href="#home" class="logo" aria-label="CELI Official početna">
+        <span class="logo__script">Celi</span>
+        <span class="logo__sub">O F F I C I A L</span>
+      </a>
+
+      <div class="header__actions">
+        <button class="icon-btn" id="searchToggle" aria-label="Pretraga">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </button>
+        <button class="icon-btn cart-btn" id="cartToggle" aria-label="Košarica">
+          <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="searchbar" id="searchbar">
+      <div class="container">
+        <input type="search" id="searchInput" placeholder="Pretraži haljine…" />
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <div class="hero__bg"></div>
+    <div class="hero__content">
+      <p class="hero__eyebrow">CELI · Mostar</p>
+      <h1 class="hero__title">Haljine koje<br/>pamte trenutke</h1>
+      <p class="hero__sub">Ručno odabrana kolekcija elegantnih i svečanih haljina za svaku posebnu priliku.</p>
+      <a href="#shop" class="btn btn--gold">Pogledaj kolekciju</a>
+    </div>
+    <a href="#shop" class="hero__scroll" aria-label="Skrolaj dolje">↓</a>
+  </section>
+
+  <!-- Category tiles -->
+  <section class="cats container">
+    <a href="#shop" class="cat" data-filter="svecane">
+      <div class="cat__art cat__art--1"></div>
+      <span>Svečane haljine</span>
+    </a>
+    <a href="#shop" class="cat" data-filter="koktel">
+      <div class="cat__art cat__art--2"></div>
+      <span>Koktel haljine</span>
+    </a>
+    <a href="#shop" class="cat" data-filter="dnevne">
+      <div class="cat__art cat__art--3"></div>
+      <span>Dnevne haljine</span>
+    </a>
+  </section>
+
+  <!-- Shop -->
+  <section class="shop container" id="shop">
+    <div class="section-head">
+      <p class="eyebrow">Kolekcija</p>
+      <h2>Naše haljine</h2>
+    </div>
+
+    <div class="filters" id="filters">
+      <button class="chip is-active" data-filter="all">Sve</button>
+      <button class="chip" data-filter="svecane">Svečane</button>
+      <button class="chip" data-filter="koktel">Koktel</button>
+      <button class="chip" data-filter="dnevne">Dnevne</button>
+      <button class="chip" data-filter="maxi">Maxi</button>
+    </div>
+
+    <div class="grid" id="productGrid"><!-- products injected by JS --></div>
+    <p class="empty" id="emptyState" hidden>Nema haljina koje odgovaraju pretrazi.</p>
+  </section>
+
+  <!-- Feature strip -->
+  <section class="features">
+    <div class="container features__inner">
+      <div class="feature"><span class="feature__ic">✦</span><h4>Premium materijali</h4><p>Pažljivo birane tkanine i izrada.</p></div>
+      <div class="feature"><span class="feature__ic">⤓</span><h4>Brza dostava</h4><p>Dostava po cijeloj BiH i regiji.</p></div>
+      <div class="feature"><span class="feature__ic">♡</span><h4>Lični stil</h4><p>Savjetovanje uz svaku narudžbu.</p></div>
+      <div class="feature"><span class="feature__ic">↺</span><h4>Laka zamjena</h4><p>Zamjena veličine u 14 dana.</p></div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about container" id="about">
+    <div class="about__art"></div>
+    <div class="about__text">
+      <p class="eyebrow">O nama</p>
+      <h2>Priča o CELI</h2>
+      <p>CELI je mostarski butik posvećen ženstvenosti i eleganciji. Svaku haljinu biramo s ljubavlju kako biste se u njoj osjećali jedinstveno — bilo da je riječ o vjenčanju, proslavi ili posebnoj večeri.</p>
+      <p>Naša misija je jednostavna: pomoći vam da pronađete savršenu haljinu koja naglašava vašu ljepotu i samopouzdanje.</p>
+      <a href="https://www.instagram.com/celi.officiel/" target="_blank" rel="noopener" class="btn btn--outline">Zaprati nas na Instagramu</a>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="newsletter">
+    <div class="container newsletter__inner">
+      <h2>Budite prvi koji znaju</h2>
+      <p>Prijavite se za novosti o kolekcijama i ekskluzivnim popustima.</p>
+      <form class="newsletter__form" id="newsletterForm">
+        <input type="email" placeholder="Vaša e-mail adresa" required />
+        <button class="btn btn--gold" type="submit">Prijavi se</button>
+      </form>
+      <p class="newsletter__msg" id="newsletterMsg" hidden>Hvala! Uspješno ste prijavljeni. ✦</p>
+    </div>
+  </section>
+
+  <!-- Contact / Footer -->
+  <footer class="footer" id="contact">
+    <div class="container footer__inner">
+      <div class="footer__col footer__brand">
+        <span class="logo__script footer__logo">Celi</span>
+        <p>Elegantne haljine za svaku posebnu priliku.</p>
+      </div>
+      <div class="footer__col">
+        <h5>Kontakt</h5>
+        <p><a href="tel:+38763008800">+387 63 008 800</a></p>
+        <p><a href="mailto:info@celi.ba">info@celi.ba</a></p>
+        <p><a href="https://wa.me/38763008800" target="_blank" rel="noopener">WhatsApp</a></p>
+      </div>
+      <div class="footer__col">
+        <h5>Posjetite nas</h5>
+        <p>Mepas Mall<br/>Kardinala Stepinca bb<br/>88000 Mostar, BiH</p>
+      </div>
+      <div class="footer__col">
+        <h5>Pratite nas</h5>
+        <p><a href="https://www.instagram.com/celi.officiel/" target="_blank" rel="noopener">Instagram</a></p>
+        <p><a href="#shop">Kolekcija</a></p>
+        <p><a href="#about">O nama</a></p>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container">
+        <span>© <span id="year"></span> CELI Official. Sva prava pridržana.</span>
+        <span>Izrada: webshop demo</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cart drawer -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="cart" id="cart" aria-label="Košarica">
+    <div class="cart__head">
+      <h3>Vaša košarica</h3>
+      <button class="icon-btn" id="cartClose" aria-label="Zatvori">✕</button>
+    </div>
+    <div class="cart__body" id="cartBody"><!-- items --></div>
+    <div class="cart__foot">
+      <div class="cart__total"><span>Ukupno</span><strong id="cartTotal">0 KM</strong></div>
+      <button class="btn btn--gold btn--block" id="checkoutBtn">Naruči putem WhatsApp-a</button>
+      <p class="cart__note">Narudžba se šalje na naš WhatsApp — potvrdit ćemo dostupnost i dostavu.</p>
+    </div>
+  </aside>
+
+  <!-- Quick view modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal__overlay" id="modalOverlay"></div>
+    <div class="modal__box" id="modalBox"><!-- injected --></div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/products.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

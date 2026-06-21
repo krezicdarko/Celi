@@ -551,7 +551,9 @@ h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-
 .admin{padding:34px 24px 70px}
 .admin__head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
 .admin__title{font-size:clamp(1.8rem,4vw,2.6rem)}
-.admin__sub{color:var(--ink-soft);font-size:.9rem;margin-top:4px}
+.admin__loc{display:inline-block;margin-top:8px;font-size:.74rem;letter-spacing:.06em;color:var(--gold-deep);
+  background:var(--cream);border:1px solid var(--line);border-radius:30px;padding:5px 14px}
+.admin__sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px}
 .admin__tools{display:flex;gap:8px;flex-wrap:wrap}
 .admin__tools .btn{padding:11px 18px;font-size:.7rem;cursor:pointer}
 
